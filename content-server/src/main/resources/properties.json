@@ -1,0 +1,130 @@
+[
+  {
+    "propertyCode": "MLEWH",
+    "name": "W Maldives",
+    "brand": "W Hotels",
+    "city": "Maldives",
+    "marketCode": "MLE",
+    "lat": 4.1755,
+    "lon": 73.5093,
+    "priceTierUSD": 1200,
+    "tags": ["beach", "overwater", "infinity-pool", "tropical"],
+    "images": {
+      "img_mlewh_01": "mlewh_01.jpg",
+      "img_mlewh_02": "mlewh_02.jpg",
+      "img_mlewh_03": "mlewh_03.jpg"
+    },
+    "lastModified": "2026-05-01T00:00:00Z"
+  },
+  {
+    "propertyCode": "MLEAK",
+    "name": "JW Marriott Maldives Resort & Spa",
+    "brand": "JW Marriott",
+    "city": "Maldives",
+    "marketCode": "MLE",
+    "lat": 6.1843,
+    "lon": 72.9382,
+    "priceTierUSD": 1500,
+    "tags": ["beach", "overwater", "luxury", "tropical"],
+    "images": {
+      "img_mleak_01": "mleak_01.jpg",
+      "img_mleak_02": "mleak_02.jpg"
+    },
+    "lastModified": "2026-05-01T00:00:00Z"
+  },
+  {
+    "propertyCode": "MLERZ",
+    "name": "The Ritz-Carlton Maldives, Fari Islands",
+    "brand": "Ritz-Carlton",
+    "city": "Maldives",
+    "marketCode": "MLE",
+    "lat": 4.4831,
+    "lon": 73.5183,
+    "priceTierUSD": 1800,
+    "tags": ["beach", "overwater", "luxury", "tropical", "spa"],
+    "images": {
+      "img_mlerz_01": "mlerz_01.jpg",
+      "img_mlerz_02": "mlerz_02.jpg"
+    },
+    "lastModified": "2026-05-01T00:00:00Z"
+  },
+  {
+    "propertyCode": "NYCEB",
+    "name": "The St. Regis New York",
+    "brand": "St. Regis",
+    "city": "New York",
+    "marketCode": "NYC",
+    "lat": 40.7616,
+    "lon": -73.9747,
+    "priceTierUSD": 900,
+    "tags": ["urban", "luxury", "skyline", "metropolitan"],
+    "images": {
+      "img_nyceb_01": "nyceb_01.jpg",
+      "img_nyceb_02": "nyceb_02.jpg"
+    },
+    "lastModified": "2026-05-01T00:00:00Z"
+  },
+  {
+    "propertyCode": "NYCMQ",
+    "name": "The Times Square EDITION",
+    "brand": "EDITION",
+    "city": "New York",
+    "marketCode": "NYC",
+    "lat": 40.7589,
+    "lon": -73.9851,
+    "priceTierUSD": 750,
+    "tags": ["urban", "skyline", "modern", "metropolitan"],
+    "images": {
+      "img_nycmq_01": "nycmq_01.jpg",
+      "img_nycmq_02": "nycmq_02.jpg"
+    },
+    "lastModified": "2026-05-01T00:00:00Z"
+  },
+  {
+    "propertyCode": "ASEAB",
+    "name": "The St. Regis Aspen Resort",
+    "brand": "St. Regis",
+    "city": "Aspen",
+    "marketCode": "ASE",
+    "lat": 39.1911,
+    "lon": -106.8175,
+    "priceTierUSD": 1100,
+    "tags": ["mountain", "ski", "snow", "luxury", "alpine"],
+    "images": {
+      "img_aseab_01": "aseab_01.jpg",
+      "img_aseab_02": "aseab_02.jpg"
+    },
+    "lastModified": "2026-05-01T00:00:00Z"
+  },
+  {
+    "propertyCode": "RAKMK",
+    "name": "Marrakech Marriott",
+    "brand": "Marriott",
+    "city": "Marrakech",
+    "marketCode": "RAK",
+    "lat": 31.6295,
+    "lon": -7.9811,
+    "priceTierUSD": 400,
+    "tags": ["desert", "moroccan", "courtyard", "exotic"],
+    "images": {
+      "img_rakmk_01": "rakmk_01.jpg"
+    },
+    "lastModified": "2026-05-01T00:00:00Z"
+  },
+  {
+    "propertyCode": "DXBJW",
+    "name": "JW Marriott Marquis Hotel Dubai",
+    "brand": "JW Marriott",
+    "city": "Dubai",
+    "marketCode": "DXB",
+    "lat": 25.1845,
+    "lon": 55.2645,
+    "priceTierUSD": 700,
+    "tags": ["urban", "skyline", "modern", "luxury", "desert"],
+    "images": {
+      "img_dxbjw_01": "dxbjw_01.jpg",
+      "img_dxbjw_02": "dxbjw_02.jpg"
+    },
+    "lastModified": "2026-05-01T00:00:00Z"
+  }
+]

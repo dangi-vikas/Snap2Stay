@@ -1,0 +1,107 @@
+openapi: 3.0.3
+info:
+  title: Snap2Stay — Content Server (codefest)
+  description: |
+    Codefest stand-in for Marriott's Property Image Catalog. Serves seed
+    property images and metadata from local disk. The Image Ingestion
+    Service consumes this; in prod the same `ContentSource` interface is
+    backed by Marriott's CDN or a partner feed (Meta, Pinterest).
+  version: 0.1.0
+
+servers:
+  - url: http://localhost:8083
+    description: Codefest local
+
+paths:
+  /content/properties:
+    get:
+      summary: List property metadata + image references
+      operationId: listProperties
+      parameters:
+        - in: query
+          name: since
+          required: false
+          schema:
+            type: string
+            format: date-time
+          description: ISO timestamp watermark for incremental ingestion
+      responses:
+        '200':
+          description: Properties with their associated image IDs
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PropertyRecord'
+
+  /content/images/{imageId}:
+    get:
+      summary: Fetch image bytes
+      operationId: fetchImage
+      parameters:
+        - in: path
+          name: imageId
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Image bytes
+          content:
+            image/jpeg:
+              schema:
+                type: string
+                format: binary
+            image/png:
+              schema:
+                type: string
+                format: binary
+        '404':
+          description: Image not found
+
+components:
+  schemas:
+    PropertyRecord:
+      type: object
+      required: [propertyCode, name, brand, city, marketCode, lat, lon, imageIds]
+      properties:
+        propertyCode:
+          type: string
+          example: MLEWH
+        name:
+          type: string
+          example: W Maldives
+        brand:
+          type: string
+          example: W Hotels
+        city:
+          type: string
+          example: Maldives
+        marketCode:
+          type: string
+          example: MLE
+        lat:
+          type: number
+          format: float
+          example: 4.1755
+        lon:
+          type: number
+          format: float
+          example: 73.5093
+        priceTierUSD:
+          type: integer
+          example: 1200
+        tags:
+          type: array
+          items:
+            type: string
+          example: ['beach', 'overwater', 'infinity-pool']
+        imageIds:
+          type: array
+          items:
+            type: string
+          example: ['img_mlewh_01', 'img_mlewh_02']
+        lastModified:
+          type: string
+          format: date-time

@@ -1,0 +1,287 @@
+openapi: 3.0.3
+info:
+  title: Snap2Stay — Visual Search API
+  description: |
+    Public-facing visual search for Marriott properties.
+    A guest uploads a photo (Pinterest screenshot, vacation snap, magazine clipping)
+    and gets back a ranked list of matching Marriott properties plus other
+    properties in the same destination.
+
+    See `docs/VisualSearchArchitecture.md` for the full pipeline.
+  version: 0.1.0
+  contact:
+    name: Snap2Stay (Codefest 4.0)
+
+servers:
+  - url: http://localhost:8081
+    description: Codefest local
+  - url: https://api.marriott.com/v1
+    description: Prod (via Akana) — illustrative only
+
+tags:
+  - name: search
+    description: Visual search endpoints
+  - name: health
+    description: Liveness and readiness
+
+paths:
+  /v1/visual-search:
+    post:
+      tags: [search]
+      summary: Search properties by uploading an image
+      description: |
+        Multipart form upload OR JSON with `imageUrl`. Returns ranked
+        primary matches plus a "nearbyInLocation" rail anchored on the
+        top-1 match's market.
+
+        EXIF/GPS is **always stripped** from the image bytes before
+        anything else happens. If `useImageLocation=true` (opt-in), GPS
+        is extracted into a transient query hint and used as a geo
+        pre-filter — never logged, never persisted.
+      operationId: visualSearch
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/VisualSearchMultipartRequest'
+          application/json:
+            schema:
+              $ref: '#/components/schemas/VisualSearchJsonRequest'
+      responses:
+        '200':
+          description: Ranked search results
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VisualSearchResponse'
+        '400':
+          description: Invalid request (bad image, both image and imageUrl, etc.)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '413':
+          description: Image too large (>10 MB)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Image rejected (NSFW, watermark, broken)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '503':
+          description: |
+            Embedding Service or Vector DB unavailable.
+            Response body suggests text-search fallback.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /v1/health/live:
+    get:
+      tags: [health]
+      summary: Liveness probe
+      responses:
+        '200':
+          description: Process is alive
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthResponse'
+
+  /v1/health/ready:
+    get:
+      tags: [health]
+      summary: Readiness probe (checks embedding service + vector store)
+      responses:
+        '200':
+          description: Ready to serve traffic
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthResponse'
+        '503':
+          description: Not ready
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthResponse'
+
+components:
+  schemas:
+
+    VisualSearchMultipartRequest:
+      type: object
+      required: [image]
+      properties:
+        image:
+          type: string
+          format: binary
+          description: JPEG or PNG, max 10 MB
+        useImageLocation:
+          type: boolean
+          default: false
+          description: |
+            Opt-in. When true, EXIF GPS (if present) is extracted as a
+            transient geo hint for the search, then discarded. Default false.
+        dates:
+          $ref: '#/components/schemas/DateRange'
+        destination:
+          type: string
+          description: Optional text hint, e.g. "Maldives"
+          example: Maldives
+        filters:
+          $ref: '#/components/schemas/SearchFilters'
+        consumerId:
+          type: string
+          description: Client identifier (e.g. "bonvoy-app-ios")
+          example: bonvoy-app-ios
+
+    VisualSearchJsonRequest:
+      type: object
+      required: [imageUrl]
+      properties:
+        imageUrl:
+          type: string
+          format: uri
+          example: https://i.pinimg.com/originals/abc/def.jpg
+        useImageLocation:
+          type: boolean
+          default: false
+        dates:
+          $ref: '#/components/schemas/DateRange'
+        destination:
+          type: string
+        filters:
+          $ref: '#/components/schemas/SearchFilters'
+        consumerId:
+          type: string
+
+    DateRange:
+      type: object
+      required: [checkIn, checkOut]
+      properties:
+        checkIn:
+          type: string
+          format: date
+          example: '2026-08-01'
+        checkOut:
+          type: string
+          format: date
+          example: '2026-08-05'
+
+    SearchFilters:
+      type: object
+      properties:
+        brand:
+          type: array
+          items:
+            type: string
+          example: ['W Hotels', 'Ritz-Carlton']
+        maxPriceUSD:
+          type: integer
+          minimum: 0
+        marketCode:
+          type: string
+          example: MLE
+
+    VisualSearchResponse:
+      type: object
+      required: [primaryMatches, queryId, tookMs]
+      properties:
+        primaryMatches:
+          type: array
+          items:
+            $ref: '#/components/schemas/PropertyMatch'
+        nearbyInLocation:
+          $ref: '#/components/schemas/NearbyGroup'
+        queryId:
+          type: string
+          example: qry_8h2k4lm
+        tookMs:
+          type: integer
+          example: 412
+
+    PropertyMatch:
+      type: object
+      required: [propertyCode, name, matchScore, thumbnailUrl, available]
+      properties:
+        propertyCode:
+          type: string
+          example: MLEWH
+        name:
+          type: string
+          example: W Maldives
+        brand:
+          type: string
+          example: W Hotels
+        city:
+          type: string
+          example: Maldives
+        marketCode:
+          type: string
+          example: MLE
+        matchScore:
+          type: number
+          format: float
+          minimum: 0
+          maximum: 1
+          example: 0.91
+        thumbnailUrl:
+          type: string
+          format: uri
+        explanation:
+          type: string
+          description: Optional one-line "why this matches" (Phase 2)
+        available:
+          type: boolean
+
+    NearbyGroup:
+      type: object
+      required: [city, anchorPropertyCode, properties]
+      properties:
+        city:
+          type: string
+          example: Maldives
+        marketCode:
+          type: string
+          example: MLE
+        anchorPropertyCode:
+          type: string
+          example: MLEWH
+        properties:
+          type: array
+          items:
+            $ref: '#/components/schemas/PropertyMatch'
+
+    HealthResponse:
+      type: object
+      required: [status]
+      properties:
+        status:
+          type: string
+          enum: [UP, DOWN, DEGRADED]
+        components:
+          type: object
+          additionalProperties:
+            type: string
+
+    ErrorResponse:
+      type: object
+      required: [code, message]
+      properties:
+        code:
+          type: string
+          example: IMAGE_TOO_LARGE
+        message:
+          type: string
+          example: Image exceeds 10 MB limit
+        suggestion:
+          type: string
+        correlationId:
+          type: string

@@ -1,0 +1,46 @@
+# Build artifacts
+target/
+*.class
+*.jar
+
+# IDE
+.idea/
+*.iml
+.vscode/
+.project
+.classpath
+.settings/
+
+# Maven
+.mvn/wrapper/maven-wrapper.jar
+
+# Logs
+*.log
+logs/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Python (embedding-service)
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+env/
+.python-version
+
+# CLIP / model caches
+embedding-service/models/
+embedding-service/.cache/
+*.bin
+*.safetensors
+
+# Spring Boot
+HELP.md
+
+# Local config overrides
+application-local.yml
+application-local.yaml
+application-local.properties

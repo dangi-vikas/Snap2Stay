@@ -1,0 +1,24 @@
+server:
+  port: 8084   # not really used — this service is mostly batch — but Spring needs a port
+
+spring:
+  application:
+    name: snap2stay-image-ingestion
+  main:
+    web-application-type: none   # batch runner; no HTTP server needed
+
+snap2stay:
+  ingestion:
+    contentSource:
+      baseUrl: http://localhost:8083
+    embedding:
+      baseUrl: http://localhost:8082
+    vectorStore:
+      baseUrl: http://localhost:8081
+    batchSize: 8
+    concurrency: 4
+
+logging:
+  level:
+    root: INFO
+    com.marriott.codefest: INFO

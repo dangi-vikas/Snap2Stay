@@ -1,0 +1,28 @@
+server:
+  port: 8083
+
+spring:
+  application:
+    name: snap2stay-content-server
+  jackson:
+    serialization:
+      write-dates-as-timestamps: false
+
+snap2stay:
+  contentserver:
+    seedFile: classpath:properties.json
+    imagesDir: seed-images
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health, info
+  endpoint:
+    health:
+      show-details: always
+
+logging:
+  level:
+    root: INFO
+    com.marriott.codefest: DEBUG

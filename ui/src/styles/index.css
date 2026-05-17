@@ -1,0 +1,77 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html, body, #root {
+    height: 100%;
+  }
+  body {
+    @apply bg-bonvoy-surface text-bonvoy-ink antialiased;
+    font-feature-settings: "kern" 1, "liga" 1;
+  }
+  /* Marriott uses a refined, slightly tightened heading style */
+  h1, h2, h3 { letter-spacing: -0.01em; }
+}
+
+@layer components {
+  /* The classic Marriott pill/CTA */
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2 rounded-full
+           bg-bonvoy-ink text-white px-6 py-2.5 text-sm font-medium
+           transition-all duration-200 hover:bg-bonvoy-charcoal
+           hover:shadow-lg active:scale-[0.98];
+  }
+
+  .btn-ghost {
+    @apply inline-flex items-center justify-center gap-2 rounded-full
+           border border-bonvoy-ink/20 text-bonvoy-ink px-5 py-2 text-sm
+           font-medium transition-all duration-200
+           hover:border-bonvoy-ink hover:bg-bonvoy-ink hover:text-white;
+  }
+
+  .field {
+    @apply flex flex-col gap-1 px-5 py-3;
+  }
+  .field-label {
+    @apply text-[11px] font-semibold uppercase tracking-wider text-bonvoy-slate;
+  }
+  .field-value {
+    @apply text-base font-medium text-bonvoy-ink;
+  }
+
+  /* Tag chip used in the analyzing-state and on cards */
+  .tag-chip {
+    @apply inline-flex items-center gap-1 rounded-full
+           bg-bonvoy-surface/80 backdrop-blur-sm
+           border border-bonvoy-line px-3 py-1
+           text-xs font-medium text-bonvoy-charcoal;
+  }
+
+  /* Shimmer loading effect (used under the analyzing image) */
+  .shimmer {
+    background: linear-gradient(
+      90deg,
+      rgba(255, 255, 255, 0) 0%,
+      rgba(255, 255, 255, 0.6) 50%,
+      rgba(255, 255, 255, 0) 100%
+    );
+    background-size: 200% 100%;
+    @apply animate-shimmer;
+  }
+
+  /* Glassy panel like Marriott's search bar */
+  .glass-panel {
+    @apply bg-white/95 backdrop-blur-md rounded-md shadow-card
+           border border-bonvoy-line/60;
+  }
+}
+
+/* Scrollbar polish for the results rails */
+.rail::-webkit-scrollbar { height: 8px; }
+.rail::-webkit-scrollbar-track { background: transparent; }
+.rail::-webkit-scrollbar-thumb {
+  background: #d4d2cc;
+  border-radius: 4px;
+}
+.rail::-webkit-scrollbar-thumb:hover { background: #b8b6b0; }

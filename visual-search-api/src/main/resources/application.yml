@@ -1,0 +1,40 @@
+server:
+  port: 8081
+
+spring:
+  application:
+    name: snap2stay-visual-search-api
+  codec:
+    max-in-memory-size: 20MB
+  webflux:
+    multipart:
+      max-in-memory-size: 20MB
+      max-disk-usage-per-part: -1
+
+snap2stay:
+  embedding:
+    baseUrl: http://localhost:8082
+  vectorstore:
+    type: in-memory
+  search:
+    knnK: 200
+    finalCap: 10
+    visualWeight: 0.7
+    textWeight: 0.3
+  locationExpansion:
+    max: 10
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health, info
+  endpoint:
+    health:
+      show-details: always
+
+logging:
+  level:
+    root: INFO
+    com.marriott.codefest: DEBUG
+    org.springframework.web.reactive: WARN

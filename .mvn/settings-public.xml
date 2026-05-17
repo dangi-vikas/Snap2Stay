@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Project-local Maven settings. Forces all dependency resolution through
+  Maven Central, bypassing any user-level mirror (e.g., an internal corporate
+  Artifactory) that may not be reachable outside a VPN.
+
+  Activate with:
+      mvn -s .mvn/settings-public.xml clean install
+-->
+<settings xmlns="http://maven.apache.org/SETTINGS/1.0.0"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0
+                              http://maven.apache.org/xsd/settings-1.0.0.xsd">
+
+    <mirrors>
+        <mirror>
+            <id>central-public</id>
+            <name>Maven Central (public)</name>
+            <url>https://repo.maven.apache.org/maven2</url>
+            <mirrorOf>*</mirrorOf>
+        </mirror>
+    </mirrors>
+
+</settings>

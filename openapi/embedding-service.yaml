@@ -1,0 +1,145 @@
+openapi: 3.0.3
+info:
+  title: Snap2Stay — Embedding Service
+  description: |
+    Internal microservice. Wraps an open-source multimodal model (CLIP) to
+    produce vector fingerprints, captions, and tags for property and guest
+    images. Same service used by both the indexing and query pipelines.
+  version: 0.1.0
+
+servers:
+  - url: http://localhost:8082
+    description: Codefest local
+
+paths:
+  /embed:
+    post:
+      summary: Vector-only embedding (fast path)
+      operationId: embed
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required: [image]
+              properties:
+                image:
+                  type: string
+                  format: binary
+      responses:
+        '200':
+          description: Embedding vector
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EmbedResponse'
+
+  /embed-and-tag:
+    post:
+      summary: Vector + auto-caption + auto-tags (used by both index and query pipelines)
+      operationId: embedAndTag
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required: [image]
+              properties:
+                image:
+                  type: string
+                  format: binary
+      responses:
+        '200':
+          description: Vector, caption, tags
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EmbedAndTagResponse'
+
+  /embed-text:
+    post:
+      summary: Text embedding (for hybrid search; same vector space as image embeddings)
+      operationId: embedText
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [text]
+              properties:
+                text:
+                  type: string
+                  example: 'overwater villa with infinity pool at sunset'
+      responses:
+        '200':
+          description: Embedding vector
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EmbedResponse'
+
+  /health:
+    get:
+      summary: Health (model loaded?)
+      responses:
+        '200':
+          description: Healthy
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    enum: [UP, DOWN]
+                  modelName:
+                    type: string
+                    example: openai/clip-vit-base-patch32
+                  vectorDim:
+                    type: integer
+                    example: 512
+
+components:
+  schemas:
+    EmbedResponse:
+      type: object
+      required: [vector, modelName, vectorDim]
+      properties:
+        vector:
+          type: array
+          items:
+            type: number
+            format: float
+          minItems: 256
+          maxItems: 1024
+        modelName:
+          type: string
+          example: openai/clip-vit-base-patch32
+        vectorDim:
+          type: integer
+          example: 512
+
+    EmbedAndTagResponse:
+      type: object
+      required: [vector, caption, tags, modelName, vectorDim]
+      properties:
+        vector:
+          type: array
+          items:
+            type: number
+            format: float
+        caption:
+          type: string
+          example: 'overwater bungalow at sunset with infinity pool'
+        tags:
+          type: array
+          items:
+            type: string
+          example: ['beach', 'overwater', 'infinity-pool', 'sunset']
+        modelName:
+          type: string
+        vectorDim:
+          type: integer
