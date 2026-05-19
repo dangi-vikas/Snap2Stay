@@ -2,7 +2,9 @@ package com.marriott.codefest.snap2stay.imageingestion;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.client.reactive.ReactorClientHttpConnector;
 import org.springframework.stereotype.Component;
+import org.springframework.web.reactive.function.client.ExchangeStrategies;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
@@ -22,7 +24,16 @@ public class ContentSourceClient {
             WebClient.Builder builder,
             @Value("${snap2stay.ingestion.contentSource.baseUrl:http://localhost:8083}") String baseUrl) {
         this.baseUrl = baseUrl;
-        this.client = builder.baseUrl(baseUrl).build();
+        
+        // Increase buffer size to handle larger images (default is 256KB, we need ~2MB)
+        ExchangeStrategies strategies = ExchangeStrategies.builder()
+                .codecs(configurer -> configurer.defaultCodecs().maxInMemorySize(2 * 1024 * 1024))
+                .build();
+        
+        this.client = builder
+                .baseUrl(baseUrl)
+                .exchangeStrategies(strategies)
+                .build();
     }
 
     public Mono<List<PropertyRecord>> listAll() {

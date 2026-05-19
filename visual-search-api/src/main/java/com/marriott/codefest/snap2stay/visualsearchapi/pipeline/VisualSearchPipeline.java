@@ -111,11 +111,15 @@ public class VisualSearchPipeline {
 
         VisualSearchDtos.NearbyGroup nearby = locationExpander.expandAroundTop(top, f, dates);
 
+        // Include debug info for the UI to show what the AI detected
+        VisualSearchDtos.DebugInfo debug = new VisualSearchDtos.DebugInfo(emb.tags(), emb.caption());
+
         return new VisualSearchDtos.VisualSearchResponse(
                 top.stream().map(s -> toDto(s, dates)).toList(),
                 nearby,
                 "qry_" + UUID.randomUUID().toString().replace("-", "").substring(0, 10),
-                0L);  // tookMs filled in by the controller via Stopwatch
+                0L,  // tookMs filled in by the controller via Stopwatch
+                debug);
     }
 
     private List<ScoredImage> applyAvailability(List<ScoredImage> hits, VisualSearchDtos.DateRange dates) {

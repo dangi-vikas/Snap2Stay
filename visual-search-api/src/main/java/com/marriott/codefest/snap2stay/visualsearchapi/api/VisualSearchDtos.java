@@ -54,11 +54,18 @@ public final class VisualSearchDtos {
     ) {}
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
+    public record DebugInfo(
+            List<String> tags,
+            String caption
+    ) {}
+
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     public record VisualSearchResponse(
             List<PropertyMatch> primaryMatches,
             NearbyGroup nearbyInLocation,
             String queryId,
-            long tookMs
+            long tookMs,
+            DebugInfo debug
     ) {}
 
     public record ErrorResponse(

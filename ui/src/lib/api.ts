@@ -1,20 +1,20 @@
 import type { SearchOptions, VisualSearchResponseWithDebug } from '@/types/api';
-import { mockMaldivesResponse } from './mocks';
+import { mockBeachResponse, mockUrbanResponse, mockHeritageResponse } from './mocks';
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL || '/v1';
-const USE_MOCK = (import.meta.env.VITE_USE_MOCK ?? 'true') === 'true';
+const USE_MOCK = (import.meta.env.VITE_USE_MOCK ?? 'false') === 'true';
 
 const MOCK_LATENCY_MS = 1800;
 
 /**
- * Visual search client. By default runs against mocks (codefest demo safety);
- * set VITE_USE_MOCK=false to hit the real visual-search-api.
+ * Visual search client. 
+ * 
+ * Set VITE_USE_MOCK=true to use mock data (for UI development without backend).
+ * Set VITE_USE_MOCK=false (default) to hit the real visual-search-api.
  *
- * Flip the switch only when:
- *   1. embedding-service has CLIP weights cached
- *   2. content-server is up and seeded
- *   3. ingestion has populated the vector store
- *   (i.e. when `docker compose up` is healthy)
+ * The backend uses Google's SigLIP model for 768-dim embeddings with ~10% better
+ * accuracy than CLIP. Hybrid search combines visual similarity with auto-generated
+ * tags for better results.
  */
 export async function visualSearch(
   image: File,
@@ -31,7 +31,9 @@ async function mockSearch(
   _options: SearchOptions,
 ): Promise<VisualSearchResponseWithDebug> {
   await sleep(MOCK_LATENCY_MS);
-  return mockMaldivesResponse;
+  // Randomly pick a mock response to show variety
+  const mocks = [mockBeachResponse, mockUrbanResponse, mockHeritageResponse];
+  return mocks[Math.floor(Math.random() * mocks.length)];
 }
 
 async function realSearch(

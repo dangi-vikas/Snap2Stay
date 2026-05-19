@@ -2,10 +2,13 @@ openapi: 3.0.3
 info:
   title: Snap2Stay — Embedding Service
   description: |
-    Internal microservice. Wraps an open-source multimodal model (CLIP) to
-    produce vector fingerprints, captions, and tags for property and guest
-    images. Same service used by both the indexing and query pipelines.
-  version: 0.1.0
+    Internal microservice. Wraps Google's SigLIP model to produce vector 
+    fingerprints, captions, and tags for property and guest images. 
+    Same service used by both the indexing and query pipelines.
+    
+    SigLIP improves on CLIP with ~10% better zero-shot accuracy and 
+    better calibrated similarity scores via sigmoid loss.
+  version: 0.2.0
 
 servers:
   - url: http://localhost:8082
@@ -94,13 +97,13 @@ paths:
                 properties:
                   status:
                     type: string
-                    enum: [UP, DOWN]
+                    enum: [UP, STARTING]
                   modelName:
                     type: string
-                    example: openai/clip-vit-base-patch32
+                    example: google/siglip-base-patch16-224
                   vectorDim:
                     type: integer
-                    example: 512
+                    example: 768
 
 components:
   schemas:
@@ -117,10 +120,10 @@ components:
           maxItems: 1024
         modelName:
           type: string
-          example: openai/clip-vit-base-patch32
+          example: google/siglip-base-patch16-224
         vectorDim:
           type: integer
-          example: 512
+          example: 768
 
     EmbedAndTagResponse:
       type: object

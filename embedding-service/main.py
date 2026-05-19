@@ -1,8 +1,8 @@
 """
 Snap2Stay Embedding Service.
 
-Wraps OpenAI's CLIP (ViT-B/32) to produce:
-  - vector embeddings (image or text) — 512-dim
+Wraps Google's SigLIP (ViT-B/16) to produce:
+  - vector embeddings (image or text) — 768-dim
   - auto-tags via zero-shot classification against a property vocabulary
   - auto-captions synthesized from the top tags
 
@@ -12,8 +12,12 @@ Endpoints:
   POST /embed-text        — text  -> vector (for hybrid search)
   GET  /health            — model loaded?
 
-Same vector space for image and text, which is the whole point of CLIP and is
-what makes hybrid search work in prod.
+SigLIP improves on CLIP with:
+  - Sigmoid loss instead of softmax (better calibrated similarities)
+  - ~10% better zero-shot accuracy
+  - Same inference speed on GPU
+
+Same vector space for image and text, which is what makes hybrid search work.
 """
 
 from __future__ import annotations
@@ -28,13 +32,20 @@ from fastapi import FastAPI, File, HTTPException, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from PIL import Image
 from pydantic import BaseModel
-from transformers import CLIPModel, CLIPProcessor
+from transformers import SiglipModel, SiglipProcessor
+
+# Enable AVIF support in Pillow
+try:
+    import pillow_avif
+except ImportError:
+    pass  # AVIF support optional
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s - %(message)s")
 log = logging.getLogger("snap2stay.embedding")
 
-MODEL_NAME = os.getenv("SNAP2STAY_MODEL_NAME", "openai/clip-vit-base-patch32")
+MODEL_NAME = os.getenv("SNAP2STAY_MODEL_NAME", "google/siglip-base-patch16-224")
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
+VECTOR_DIM = 768  # SigLIP base produces 768-dim vectors
 
 # Vocabulary used for zero-shot tagging. Property-relevant concepts only.
 TAG_VOCABULARY: List[str] = [
@@ -96,7 +107,7 @@ CAPTION_PHRASE = {
     "business": "business",
 }
 
-app = FastAPI(title="Snap2Stay Embedding Service", version="0.1.0")
+app = FastAPI(title="Snap2Stay Embedding Service", version="0.2.0")
 
 # Permissive CORS for local dev; fronted by visual-search-api in prod, never directly exposed.
 app.add_middleware(
@@ -127,26 +138,26 @@ class EmbedTextRequest(BaseModel):
 
 # Lazy-loaded singletons. Loaded on first request so /health can return UP=false
 # during cold start instead of blocking the entire process.
-_model: CLIPModel | None = None
-_processor: CLIPProcessor | None = None
+_model: SiglipModel | None = None
+_processor: SiglipProcessor | None = None
 _tag_features: torch.Tensor | None = None
 
 
-def _load_model() -> tuple[CLIPModel, CLIPProcessor]:
+def _load_model() -> tuple[SiglipModel, SiglipProcessor]:
     global _model, _processor, _tag_features
     if _model is None or _processor is None:
-        log.info("Loading CLIP model %s onto %s ...", MODEL_NAME, DEVICE)
-        _model = CLIPModel.from_pretrained(MODEL_NAME).to(DEVICE)
+        log.info("Loading SigLIP model %s onto %s ...", MODEL_NAME, DEVICE)
+        _model = SiglipModel.from_pretrained(MODEL_NAME).to(DEVICE)
         _model.eval()
-        _processor = CLIPProcessor.from_pretrained(MODEL_NAME)
+        _processor = SiglipProcessor.from_pretrained(MODEL_NAME)
 
         # Pre-encode the tag vocabulary once so /embed-and-tag is fast.
         with torch.no_grad():
-            tag_inputs = _processor(text=TAG_VOCABULARY, return_tensors="pt", padding=True).to(DEVICE)
-            features = _model.get_text_features(**tag_inputs)
-            features = features / features.norm(dim=-1, keepdim=True)
-            _tag_features = features
-        log.info("Model + tag vocabulary ready (%d tags)", len(TAG_VOCABULARY))
+            tag_inputs = _processor(text=TAG_VOCABULARY, return_tensors="pt", padding="max_length", truncation=True).to(DEVICE)
+            text_outputs = _model.get_text_features(**tag_inputs)
+            # L2 normalize for cosine similarity
+            _tag_features = text_outputs / text_outputs.norm(dim=-1, keepdim=True)
+        log.info("Model + tag vocabulary ready (%d tags, %d-dim vectors)", len(TAG_VOCABULARY), VECTOR_DIM)
     return _model, _processor
 
 
@@ -167,12 +178,28 @@ def _encode_image(img: Image.Image) -> torch.Tensor:
     with torch.no_grad():
         inputs = processor(images=img, return_tensors="pt").to(DEVICE)
         feats = model.get_image_features(**inputs)
+        # L2 normalize for cosine similarity
         feats = feats / feats.norm(dim=-1, keepdim=True)
     return feats
 
 
-def _top_tags(image_features: torch.Tensor, k: int = 5, threshold: float = 0.20) -> List[str]:
-    """Pick top-k tags whose CLIP similarity to the image exceeds threshold."""
+def _encode_text(text: str) -> torch.Tensor:
+    model, processor = _load_model()
+    with torch.no_grad():
+        inputs = processor(text=[text], return_tensors="pt", padding="max_length", truncation=True).to(DEVICE)
+        feats = model.get_text_features(**inputs)
+        # L2 normalize for cosine similarity
+        feats = feats / feats.norm(dim=-1, keepdim=True)
+    return feats
+
+
+def _top_tags(image_features: torch.Tensor, k: int = 5, threshold: float = 0.15) -> List[str]:
+    """
+    Pick top-k tags whose SigLIP similarity to the image exceeds threshold.
+    
+    Note: SigLIP uses sigmoid scoring, so similarities are generally lower than CLIP's
+    softmax-based scores. Threshold lowered from 0.20 to 0.15 accordingly.
+    """
     assert _tag_features is not None
     sims = (image_features @ _tag_features.T).squeeze(0)  # cosine since both are L2-normalized
     top = torch.topk(sims, min(k, sims.shape[0]))
@@ -200,7 +227,7 @@ def health():
     return {
         "status": "UP" if loaded else "STARTING",
         "modelName": MODEL_NAME,
-        "vectorDim": 512,
+        "vectorDim": VECTOR_DIM,
         "device": DEVICE,
         "tagVocabularySize": len(TAG_VOCABULARY),
     }
@@ -236,11 +263,7 @@ def embed_and_tag(image: UploadFile = File(...)):
 def embed_text(req: EmbedTextRequest):
     if not req.text.strip():
         raise HTTPException(status_code=400, detail="Text is empty")
-    model, processor = _load_model()
-    with torch.no_grad():
-        inputs = processor(text=[req.text], return_tensors="pt", padding=True).to(DEVICE)
-        feats = model.get_text_features(**inputs)
-        feats = feats / feats.norm(dim=-1, keepdim=True)
+    feats = _encode_text(req.text)
     return EmbedResponse(
         vector=feats.squeeze(0).tolist(),
         modelName=MODEL_NAME,

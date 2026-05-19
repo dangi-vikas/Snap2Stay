@@ -127,7 +127,12 @@ public class LocationExpander {
             // Pull a generous slice of the store via a zero-similarity query. For the
             // codefest in-memory store this is O(n) which is fine.
             int corpusSize = Math.max(1, store.size());
-            float[] sentinel = new float[512];                  // zero vector returns everything
+            if (corpusSize == 0) {
+                return Map.of();
+            }
+            // Dynamically determine vector dimension from the store
+            int vectorDim = store.getVectorDimension();
+            float[] sentinel = new float[vectorDim];  // zero vector returns everything
             var hits = store.nearestNeighbors(sentinel, corpusSize,
                     com.marriott.codefest.snap2stay.visualsearchapi.vectorstore.VectorFilters.none());
             Map<String, IndexedImage> best = new LinkedHashMap<>();
