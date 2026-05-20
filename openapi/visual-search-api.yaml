@@ -206,6 +206,21 @@ components:
         tookMs:
           type: integer
           example: 412
+        debug:
+          $ref: '#/components/schemas/DebugInfo'
+
+    DebugInfo:
+      type: object
+      description: AI-detected features from the uploaded image (for UI display)
+      properties:
+        tags:
+          type: array
+          items:
+            type: string
+          example: ['beach', 'tropical', 'ocean', 'resort']
+        caption:
+          type: string
+          example: 'tropical beachfront resort with ocean views'
 
     PropertyMatch:
       type: object

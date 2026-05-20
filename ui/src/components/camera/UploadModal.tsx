@@ -1,4 +1,4 @@
-import { Upload, X, Image as ImageIcon, Sparkles } from 'lucide-react';
+import { Upload, X, Image as ImageIcon, Sparkles, MapPin } from 'lucide-react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { cn } from '@/lib/cn';
@@ -16,6 +16,7 @@ export function UploadModal({ open, onClose, onResults }: UploadModalProps) {
   const { setUpload, setResult, setAnalyzing, setError, isAnalyzing, uploadedPreview, error } = useSearch();
   const [isDragging, setIsDragging] = useState(false);
   const [shownTags, setShownTags] = useState<string[]>([]);
+  const [useImageLocation, setUseImageLocation] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
   // ESC closes the modal (when not in the middle of analyzing).
@@ -34,7 +35,7 @@ export function UploadModal({ open, onClose, onResults }: UploadModalProps) {
       setAnalyzing(true);
       setShownTags([]);
       try {
-        const result = await visualSearch(file, { useImageLocation: false });
+        const result = await visualSearch(file, { useImageLocation });
 
         // Stagger the tags in to feel like the AI is "writing" them.
         const tags = result.debug?.tags ?? [];
@@ -53,7 +54,7 @@ export function UploadModal({ open, onClose, onResults }: UploadModalProps) {
         setError(e instanceof Error ? e.message : 'Search failed');
       }
     },
-    [setUpload, setAnalyzing, setResult, setError, onResults],
+    [setUpload, setAnalyzing, setResult, setError, onResults, useImageLocation],
   );
 
   const handleFiles = useCallback(
@@ -138,12 +139,18 @@ export function UploadModal({ open, onClose, onResults }: UploadModalProps) {
 
             <div className="p-7">
               {!uploadedPreview && !isAnalyzing && (
-                <DropZone
-                  isDragging={isDragging}
-                  setDragging={setIsDragging}
-                  onDrop={handleDrop}
-                  onPickFile={() => inputRef.current?.click()}
-                />
+                <>
+                  <DropZone
+                    isDragging={isDragging}
+                    setDragging={setIsDragging}
+                    onDrop={handleDrop}
+                    onPickFile={() => inputRef.current?.click()}
+                  />
+                  <LocationConsent 
+                    checked={useImageLocation} 
+                    onChange={setUseImageLocation} 
+                  />
+                </>
               )}
 
               {(uploadedPreview || isAnalyzing) && (
@@ -170,7 +177,7 @@ export function UploadModal({ open, onClose, onResults }: UploadModalProps) {
             </div>
 
             <div className="px-7 py-4 bg-bonvoy-surface text-xs text-bonvoy-slate">
-              Your photo stays private. We strip EXIF/GPS metadata before processing — and never store your image.
+              Your photo stays private. EXIF/GPS metadata is stripped before processing — location is only used if you opt in above, and is never stored.
             </div>
           </motion.div>
         </motion.div>
@@ -307,5 +314,69 @@ function Step({ children, done, pending }: { children: React.ReactNode; done?: b
       />
       <span className={done ? 'text-bonvoy-ink' : 'text-bonvoy-slate'}>{children}</span>
     </div>
+  );
+}
+
+interface LocationConsentProps {
+  checked: boolean;
+  onChange: (checked: boolean) => void;
+}
+
+function LocationConsent({ checked, onChange }: LocationConsentProps) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 8 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay: 0.1 }}
+      className="mt-4 p-4 rounded-xl bg-bonvoy-surface border border-bonvoy-line"
+    >
+      <label className="flex items-start gap-3 cursor-pointer group">
+        <div className="relative flex items-center justify-center mt-0.5">
+          <input
+            type="checkbox"
+            checked={checked}
+            onChange={(e) => onChange(e.target.checked)}
+            className="peer sr-only"
+          />
+          <div
+            className={cn(
+              'w-5 h-5 rounded border-2 transition-all duration-200',
+              'flex items-center justify-center',
+              checked
+                ? 'bg-snap-glow border-snap-glow'
+                : 'border-bonvoy-mist group-hover:border-bonvoy-gold',
+            )}
+          >
+            {checked && (
+              <motion.svg
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                className="w-3 h-3 text-white"
+                viewBox="0 0 12 12"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth={2.5}
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path d="M2 6l3 3 5-6" />
+              </motion.svg>
+            )}
+          </div>
+        </div>
+        <div className="flex-1">
+          <div className="flex items-center gap-2">
+            <MapPin className="w-4 h-4 text-snap-glow" />
+            <span className="text-sm font-medium text-bonvoy-ink">
+              Use photo location to improve results
+            </span>
+          </div>
+          <p className="text-xs text-bonvoy-slate mt-1 leading-relaxed">
+            If your photo has GPS data, we'll prioritize properties near where it was taken.
+            Your location is used only for this search and is never stored.
+          </p>
+        </div>
+      </label>
+    </motion.div>
   );
 }

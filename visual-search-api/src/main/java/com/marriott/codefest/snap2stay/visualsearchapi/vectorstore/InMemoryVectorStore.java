@@ -40,6 +40,15 @@ public class InMemoryVectorStore implements VectorStore {
     }
 
     @Override
+    public int getVectorDimension() {
+        // Return dimension from first stored image, or default to 768 (SigLIP) if empty
+        return byId.values().stream()
+                .findFirst()
+                .map(img -> img.vector().length)
+                .orElse(768);
+    }
+
+    @Override
     public List<ScoredHit> nearestNeighbors(float[] queryVector, int k, VectorFilters filters) {
         if (byId.isEmpty()) {
             return List.of();

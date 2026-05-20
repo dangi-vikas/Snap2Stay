@@ -1,115 +1,33 @@
 [
   {
-    "propertyCode": "MLEWH",
-    "name": "W Maldives",
-    "brand": "W Hotels",
-    "city": "Maldives",
-    "marketCode": "MLE",
-    "lat": 4.1755,
-    "lon": 73.5093,
-    "priceTierUSD": 1200,
-    "tags": ["beach", "overwater", "infinity-pool", "tropical"],
+    "propertyCode": "BLMCY",
+    "name": "Courtyard Bloomington by Marriott",
+    "brand": "Courtyard",
+    "city": "Bloomington",
+    "marketCode": "BLM",
+    "lat": 39.1653,
+    "lon": -86.5264,
+    "priceTierUSD": 150,
+    "tags": ["urban", "business", "modern", "courtyard"],
     "images": {
-      "img_mlewh_01": "mlewh_01.jpg",
-      "img_mlewh_02": "mlewh_02.jpg",
-      "img_mlewh_03": "mlewh_03.jpg"
+      "img_blmcy_01": "Bloomington.jpeg"
     },
-    "lastModified": "2026-05-01T00:00:00Z"
+    "lastModified": "2026-05-20T00:00:00Z"
   },
   {
-    "propertyCode": "MLEAK",
-    "name": "JW Marriott Maldives Resort & Spa",
+    "propertyCode": "IXCJW",
+    "name": "JW Marriott Chandigarh",
     "brand": "JW Marriott",
-    "city": "Maldives",
-    "marketCode": "MLE",
-    "lat": 6.1843,
-    "lon": 72.9382,
-    "priceTierUSD": 1500,
-    "tags": ["beach", "overwater", "luxury", "tropical"],
+    "city": "Chandigarh",
+    "marketCode": "IXC",
+    "lat": 30.7333,
+    "lon": 76.7794,
+    "priceTierUSD": 200,
+    "tags": ["urban", "luxury", "modern", "business"],
     "images": {
-      "img_mleak_01": "mleak_01.jpg",
-      "img_mleak_02": "mleak_02.jpg"
+      "img_ixcjw_01": "Chandigarh.jpeg"
     },
-    "lastModified": "2026-05-01T00:00:00Z"
-  },
-  {
-    "propertyCode": "MLERZ",
-    "name": "The Ritz-Carlton Maldives, Fari Islands",
-    "brand": "Ritz-Carlton",
-    "city": "Maldives",
-    "marketCode": "MLE",
-    "lat": 4.4831,
-    "lon": 73.5183,
-    "priceTierUSD": 1800,
-    "tags": ["beach", "overwater", "luxury", "tropical", "spa"],
-    "images": {
-      "img_mlerz_01": "mlerz_01.jpg",
-      "img_mlerz_02": "mlerz_02.jpg"
-    },
-    "lastModified": "2026-05-01T00:00:00Z"
-  },
-  {
-    "propertyCode": "NYCEB",
-    "name": "The St. Regis New York",
-    "brand": "St. Regis",
-    "city": "New York",
-    "marketCode": "NYC",
-    "lat": 40.7616,
-    "lon": -73.9747,
-    "priceTierUSD": 900,
-    "tags": ["urban", "luxury", "skyline", "metropolitan"],
-    "images": {
-      "img_nyceb_01": "nyceb_01.jpg",
-      "img_nyceb_02": "nyceb_02.jpg"
-    },
-    "lastModified": "2026-05-01T00:00:00Z"
-  },
-  {
-    "propertyCode": "NYCMQ",
-    "name": "The Times Square EDITION",
-    "brand": "EDITION",
-    "city": "New York",
-    "marketCode": "NYC",
-    "lat": 40.7589,
-    "lon": -73.9851,
-    "priceTierUSD": 750,
-    "tags": ["urban", "skyline", "modern", "metropolitan"],
-    "images": {
-      "img_nycmq_01": "nycmq_01.jpg",
-      "img_nycmq_02": "nycmq_02.jpg"
-    },
-    "lastModified": "2026-05-01T00:00:00Z"
-  },
-  {
-    "propertyCode": "ASEAB",
-    "name": "The St. Regis Aspen Resort",
-    "brand": "St. Regis",
-    "city": "Aspen",
-    "marketCode": "ASE",
-    "lat": 39.1911,
-    "lon": -106.8175,
-    "priceTierUSD": 1100,
-    "tags": ["mountain", "ski", "snow", "luxury", "alpine"],
-    "images": {
-      "img_aseab_01": "aseab_01.jpg",
-      "img_aseab_02": "aseab_02.jpg"
-    },
-    "lastModified": "2026-05-01T00:00:00Z"
-  },
-  {
-    "propertyCode": "RAKMK",
-    "name": "Marrakech Marriott",
-    "brand": "Marriott",
-    "city": "Marrakech",
-    "marketCode": "RAK",
-    "lat": 31.6295,
-    "lon": -7.9811,
-    "priceTierUSD": 400,
-    "tags": ["desert", "moroccan", "courtyard", "exotic"],
-    "images": {
-      "img_rakmk_01": "rakmk_01.jpg"
-    },
-    "lastModified": "2026-05-01T00:00:00Z"
+    "lastModified": "2026-05-20T00:00:00Z"
   },
   {
     "propertyCode": "DXBJW",
@@ -122,9 +40,98 @@
     "priceTierUSD": 700,
     "tags": ["urban", "skyline", "modern", "luxury", "desert"],
     "images": {
-      "img_dxbjw_01": "dxbjw_01.jpg",
-      "img_dxbjw_02": "dxbjw_02.jpg"
+      "img_dxbjw_01": "Dubai.jpeg"
     },
-    "lastModified": "2026-05-01T00:00:00Z"
+    "lastModified": "2026-05-20T00:00:00Z"
+  },
+  {
+    "propertyCode": "HXWMC",
+    "name": "Marriott Hilton Head Resort & Spa",
+    "brand": "Marriott",
+    "city": "Hilton Head",
+    "marketCode": "HXW",
+    "lat": 32.1574,
+    "lon": -80.7526,
+    "priceTierUSD": 350,
+    "tags": ["beach", "resort", "spa", "tropical", "family-friendly"],
+    "images": {
+      "img_hxwmc_01": "HiltonHead.jpeg"
+    },
+    "lastModified": "2026-05-20T00:00:00Z"
+  },
+  {
+    "propertyCode": "MRKJW",
+    "name": "JW Marriott Marco Island Beach Resort",
+    "brand": "JW Marriott",
+    "city": "Marco Island",
+    "marketCode": "MRK",
+    "lat": 25.9421,
+    "lon": -81.7184,
+    "priceTierUSD": 600,
+    "tags": ["beach", "resort", "luxury", "tropical", "ocean", "spa"],
+    "images": {
+      "img_mrkjw_01": "MarcoIsland.jpeg"
+    },
+    "lastModified": "2026-05-20T00:00:00Z"
+  },
+  {
+    "propertyCode": "BNAJW",
+    "name": "JW Marriott Nashville",
+    "brand": "JW Marriott",
+    "city": "Nashville",
+    "marketCode": "BNA",
+    "lat": 36.1627,
+    "lon": -86.7816,
+    "priceTierUSD": 400,
+    "tags": ["urban", "luxury", "modern", "skyline", "metropolitan"],
+    "images": {
+      "img_bnajw_01": "Nashville.jpeg"
+    },
+    "lastModified": "2026-05-20T00:00:00Z"
+  },
+  {
+    "propertyCode": "HKTJW",
+    "name": "JW Marriott Phuket Resort & Spa",
+    "brand": "JW Marriott",
+    "city": "Phuket",
+    "marketCode": "HKT",
+    "lat": 8.0363,
+    "lon": 98.2636,
+    "priceTierUSD": 450,
+    "tags": ["beach", "resort", "tropical", "spa", "ocean", "luxury"],
+    "images": {
+      "img_hktjw_01": "Phuket.jpeg"
+    },
+    "lastModified": "2026-05-20T00:00:00Z"
+  },
+  {
+    "propertyCode": "SGNJW",
+    "name": "JW Marriott Hotel Saigon",
+    "brand": "JW Marriott",
+    "city": "Ho Chi Minh City",
+    "marketCode": "SGN",
+    "lat": 10.7769,
+    "lon": 106.7009,
+    "priceTierUSD": 250,
+    "tags": ["urban", "luxury", "modern", "skyline", "metropolitan"],
+    "images": {
+      "img_sgnjw_01": "Saigon.jpeg"
+    },
+    "lastModified": "2026-05-20T00:00:00Z"
+  },
+  {
+    "propertyCode": "UDRMR",
+    "name": "Udaipur Marriott Resort & Spa",
+    "brand": "Marriott",
+    "city": "Udaipur",
+    "marketCode": "UDR",
+    "lat": 24.5854,
+    "lon": 73.6853,
+    "priceTierUSD": 300,
+    "tags": ["resort", "luxury", "historic", "romantic", "spa", "lagoon"],
+    "images": {
+      "img_udrmr_01": "UdaipurMarriott.jpeg"
+    },
+    "lastModified": "2026-05-20T00:00:00Z"
   }
 ]

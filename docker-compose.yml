@@ -21,7 +21,7 @@ services:
 
   content-server:
     build:
-      context: ./content-server
+      context: .
       dockerfile: content-server/Dockerfile
     container_name: snap2stay-content
     ports:
@@ -34,7 +34,7 @@ services:
 
   visual-search-api:
     build:
-      context: ./visual-search-api
+      context: .
       dockerfile: visual-search-api/Dockerfile
     container_name: snap2stay-search
     ports:
@@ -52,7 +52,7 @@ services:
 
   ingestion:
     build:
-      context: ./image-ingestion-service
+      context: .
       dockerfile: image-ingestion-service/Dockerfile
     container_name: snap2stay-ingestion
     environment:

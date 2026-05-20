@@ -32,6 +32,12 @@ public interface VectorStore {
     /** Number of indexed images. */
     int size();
 
+    /** 
+     * Returns the vector dimension used by this store.
+     * Returns a default (768 for SigLIP) if the store is empty.
+     */
+    int getVectorDimension();
+
     /** A k-NN result with the cosine score against the query. */
     record ScoredHit(IndexedImage image, float cosineScore) {}
 }

@@ -6,17 +6,18 @@ The file scanner looks here first (filesystem) before falling back to the classp
 
 ## Expected files
 
-Reference the `properties.json` for the canonical list. As of seed v1:
+Reference the `properties.json` for the canonical list. Current seed:
 
 ```
-mlewh_01.jpg, mlewh_02.jpg, mlewh_03.jpg     # W Maldives
-mleak_01.jpg, mleak_02.jpg                   # JW Marriott Maldives
-mlerz_01.jpg, mlerz_02.jpg                   # Ritz-Carlton Maldives
-nyceb_01.jpg, nyceb_02.jpg                   # St. Regis New York
-nycmq_01.jpg, nycmq_02.jpg                   # Times Square EDITION
-aseab_01.jpg, aseab_02.jpg                   # St. Regis Aspen
-rakmk_01.jpg                                 # Marrakech Marriott
-dxbjw_01.jpg, dxbjw_02.jpg                   # JW Marriott Marquis Dubai
+Bloomington.jpeg          # Courtyard Bloomington
+Chandigarh.jpeg           # JW Marriott Chandigarh
+Dubai.jpeg                # JW Marriott Marquis Dubai
+Hilton Head.jpeg          # Marriott Hilton Head Resort & Spa
+Marco Island.jpeg         # JW Marriott Marco Island Beach Resort
+Nashville.jpeg            # JW Marriott Nashville
+Phuket.jpeg               # JW Marriott Phuket Resort & Spa
+Saigon.jpeg               # JW Marriott Hotel Saigon
+Udaipur Marriott.jpeg     # Udaipur Marriott Resort & Spa
 ```
 
 ## Where to source for the demo
