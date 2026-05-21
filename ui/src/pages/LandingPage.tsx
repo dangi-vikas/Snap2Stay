@@ -6,8 +6,7 @@ import { HeroOffer } from '@/components/search/HeroOffer';
 import { CameraFab } from '@/components/camera/CameraFab';
 import { UploadModal } from '@/components/camera/UploadModal';
 
-const HERO_IMAGE =
-  'https://images.unsplash.com/photo-1571896349842-33c89424de2d?auto=format&fit=crop&w=2400&q=80';
+const HERO_IMAGE = '/hero-bg.png';
 
 export function LandingPage() {
   const [uploadOpen, setUploadOpen] = useState(false);
@@ -22,14 +21,9 @@ export function LandingPage() {
         <div className="absolute inset-0 z-0">
           <img
             src={HERO_IMAGE}
-            alt="Sheraton Maui Resort & Spa"
+            alt="Luxury resort with pool and private cabanas"
             className="w-full h-full object-cover"
           />
-          <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black/20" />
-          <div className="absolute bottom-3 right-4 text-[11px] text-white/80 z-10 flex items-center gap-1">
-            <span className="opacity-70">📍</span>
-            Sheraton Maui Resort & Spa
-          </div>
         </div>
 
         {/* Content container with consistent max-width */}

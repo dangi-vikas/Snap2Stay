@@ -103,8 +103,13 @@ public class VisualSearchPipeline {
         List<ScoredImage> scored = hybrid.rerank(visualHits, queryTokens, corpusForIdf);
         List<ScoredImage> aggregated = aggregator.aggregate(scored);
 
+        // Filter out low-confidence matches (below 60%)
+        List<ScoredImage> confident = aggregated.stream()
+                .filter(s -> s.combinedScore() >= 0.70f)
+                .toList();
+
         // Availability filter — only on the top N candidates to keep fan-out bounded
-        List<ScoredImage> available = applyAvailability(aggregated, dates);
+        List<ScoredImage> available = applyAvailability(confident, dates);
 
         // Cap to final size for the primary rail
         List<ScoredImage> top = available.size() > finalCap ? available.subList(0, finalCap) : available;

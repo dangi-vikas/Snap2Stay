@@ -64,6 +64,10 @@ TAG_VOCABULARY: List[str] = [
     "romantic", "family-friendly", "business",
 ]
 
+# Prompt templates for zero-shot classification — SigLIP performs much better
+# with full sentence prompts than bare keywords.
+TAG_PROMPTS: List[str] = [f"a photo of a {tag} setting" for tag in TAG_VOCABULARY]
+
 # Map verbose-friendly captions for top tags so the synthesized caption reads naturally.
 CAPTION_PHRASE = {
     "beach": "beachfront",
@@ -153,7 +157,7 @@ def _load_model() -> tuple[SiglipModel, SiglipProcessor]:
 
         # Pre-encode the tag vocabulary once so /embed-and-tag is fast.
         with torch.no_grad():
-            tag_inputs = _processor(text=TAG_VOCABULARY, return_tensors="pt", padding="max_length", truncation=True).to(DEVICE)
+            tag_inputs = _processor(text=TAG_PROMPTS, return_tensors="pt", padding="max_length", truncation=True).to(DEVICE)
             text_outputs = _model.get_text_features(**tag_inputs)
             # L2 normalize for cosine similarity
             _tag_features = text_outputs / text_outputs.norm(dim=-1, keepdim=True)
@@ -193,19 +197,20 @@ def _encode_text(text: str) -> torch.Tensor:
     return feats
 
 
-def _top_tags(image_features: torch.Tensor, k: int = 5, threshold: float = 0.15) -> List[str]:
+def _top_tags(image_features: torch.Tensor, k: int = 5, min_score: float = 0.0) -> List[str]:
     """
-    Pick top-k tags whose SigLIP similarity to the image exceeds threshold.
+    Pick top-k tags by cosine similarity, keeping only those with positive similarity.
     
-    Note: SigLIP uses sigmoid scoring, so similarities are generally lower than CLIP's
-    softmax-based scores. Threshold lowered from 0.20 to 0.15 accordingly.
+    SigLIP's raw cosine values between normalized image/text features are small in
+    absolute magnitude (typically 0.01–0.10 for matches), but the relative ranking
+    is reliable. We use top-k with a floor of 0 (discard anti-correlated tags).
     """
     assert _tag_features is not None
-    sims = (image_features @ _tag_features.T).squeeze(0)  # cosine since both are L2-normalized
+    sims = (image_features @ _tag_features.T).squeeze(0)
     top = torch.topk(sims, min(k, sims.shape[0]))
     out: List[str] = []
     for score, idx in zip(top.values.tolist(), top.indices.tolist()):
-        if score >= threshold:
+        if score > min_score:
             out.append(TAG_VOCABULARY[idx])
     return out
 
