@@ -1,4 +1,4 @@
-import { ChevronDown, MapPin, Calendar, Search, Users } from 'lucide-react';
+import { ChevronDown, MapPin, Calendar, Search } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useState } from 'react';
 

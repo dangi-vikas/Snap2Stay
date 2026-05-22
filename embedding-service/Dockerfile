@@ -14,11 +14,4 @@ COPY main.py .
 
 EXPOSE 8082
 
-# Pre-cache CLIP weights at build time so first request is fast.
-# Comment this out if you want lighter images and don't mind a slow first call.
-RUN python -c "from transformers import CLIPModel, CLIPProcessor; \
-    name='openai/clip-vit-base-patch32'; \
-    CLIPModel.from_pretrained(name); CLIPProcessor.from_pretrained(name); \
-    print('CLIP cache primed')"
-
 CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8082"]
