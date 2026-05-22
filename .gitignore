@@ -44,9 +44,3 @@ HELP.md
 application-local.yml
 application-local.yaml
 application-local.properties
-
-# Seed images (not committed - download separately)
-content-server/seed-images/*.jpeg
-content-server/seed-images/*.jpg
-content-server/seed-images/*.png
-!content-server/seed-images/README.md

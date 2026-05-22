@@ -17,5 +17,8 @@ sentencepiece>=0.1.99
 # AVIF image support
 pillow-avif-plugin>=1.4.3
 
+# HEIC/HEIF image support
+pillow-heif>=0.16.0
+
 # Required for SigLIP tokenizer
 protobuf>=4.25.0

@@ -10,7 +10,7 @@
     "priceTierUSD": 150,
     "tags": ["urban", "business", "modern", "courtyard"],
     "images": {
-      "img_blmcy_01": "Bloomington.jpeg"
+      "img_blmcy_01": "Bloomington.jpg"
     },
     "lastModified": "2026-05-20T00:00:00Z"
   },
@@ -25,7 +25,7 @@
     "priceTierUSD": 200,
     "tags": ["urban", "luxury", "modern", "business"],
     "images": {
-      "img_ixcjw_01": "Chandigarh.jpeg"
+      "img_ixcjw_01": "Chandigarh.jpg"
     },
     "lastModified": "2026-05-20T00:00:00Z"
   },
@@ -155,7 +155,7 @@
     "brand": "ITC",
     "city": "Hyderabad",
     "marketCode": "HYD",
-    "lat": 17.4260,
+    "lat": 17.2460,
     "lon": 78.3411,
     "priceTierUSD": 350,
     "tags": ["urban", "luxury", "modern", "night", "metropolitan"],

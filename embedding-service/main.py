@@ -40,6 +40,13 @@ try:
 except ImportError:
     pass  # AVIF support optional
 
+# Enable HEIC/HEIF support in Pillow
+try:
+    from pillow_heif import register_heif_opener
+    register_heif_opener()
+except ImportError:
+    pass  # HEIC support optional
+
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s - %(message)s")
 log = logging.getLogger("snap2stay.embedding")
 
