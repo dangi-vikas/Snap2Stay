@@ -60,6 +60,7 @@ services:
     container_name: snap2stay-ingestion
     environment:
       SNAP2STAY_INGESTION_CONTENTSOURCE_BASEURL: http://content-server:8083
+      SNAP2STAY_INGESTION_CONTENTSOURCE_THUMBNAILBASEURL: ""
       SNAP2STAY_INGESTION_EMBEDDING_BASEURL: http://embedding:8082
       SNAP2STAY_INGESTION_VECTORSTORE_BASEURL: http://visual-search-api:8081
     depends_on:
@@ -77,6 +78,7 @@ services:
     container_name: snap2stay-ui
     ports:
       - "80:80"
+      - "443:443"
     depends_on:
       visual-search-api:
         condition: service_healthy

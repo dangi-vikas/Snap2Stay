@@ -19,11 +19,14 @@ public class ContentSourceClient {
 
     private final WebClient client;
     private final String baseUrl;
+    private final String thumbnailBaseUrl;
 
     public ContentSourceClient(
             WebClient.Builder builder,
-            @Value("${snap2stay.ingestion.contentSource.baseUrl:http://localhost:8083}") String baseUrl) {
+            @Value("${snap2stay.ingestion.contentSource.baseUrl:http://localhost:8083}") String baseUrl,
+            @Value("${snap2stay.ingestion.contentSource.thumbnailBaseUrl:}") String thumbnailBaseUrl) {
         this.baseUrl = baseUrl;
+        this.thumbnailBaseUrl = thumbnailBaseUrl.isEmpty() ? "" : thumbnailBaseUrl;
         
         // Increase buffer size to handle larger images (default is 256KB, we need ~2MB)
         ExchangeStrategies strategies = ExchangeStrategies.builder()
@@ -52,6 +55,6 @@ public class ContentSourceClient {
 
     /** Browser-reachable URL for an image, used as the thumbnail for matches. */
     public String thumbnailUrl(String imageId) {
-        return baseUrl + "/content/images/" + imageId;
+        return thumbnailBaseUrl + "/content/images/" + imageId;
     }
 }
