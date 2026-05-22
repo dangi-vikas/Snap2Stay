@@ -133,5 +133,80 @@
       "img_udrmr_01": "UdaipurMarriott.jpeg"
     },
     "lastModified": "2026-05-20T00:00:00Z"
+  },
+  {
+    "propertyCode": "HYDLM",
+    "name": "Le Méridien Hyderabad",
+    "brand": "Le Méridien",
+    "city": "Hyderabad",
+    "marketCode": "HYD",
+    "lat": 17.4432,
+    "lon": 78.3497,
+    "priceTierUSD": 180,
+    "tags": ["urban", "modern", "business", "luxury"],
+    "images": {
+      "img_hydlm_01": "LeMeridienHyderabad.jpg"
+    },
+    "lastModified": "2026-05-21T00:00:00Z"
+  },
+  {
+    "propertyCode": "HYDITC",
+    "name": "ITC Kohinoor Hyderabad",
+    "brand": "ITC",
+    "city": "Hyderabad",
+    "marketCode": "HYD",
+    "lat": 17.4260,
+    "lon": 78.3411,
+    "priceTierUSD": 350,
+    "tags": ["urban", "luxury", "modern", "night", "metropolitan"],
+    "images": {
+      "img_hyditc_01": "ITCKohinoorHyderabad.jpg"
+    },
+    "lastModified": "2026-05-21T00:00:00Z"
+  },
+  {
+    "propertyCode": "HYDSH",
+    "name": "Sheraton Hyderabad Hotel",
+    "brand": "Sheraton",
+    "city": "Hyderabad",
+    "marketCode": "HYD",
+    "lat": 17.4304,
+    "lon": 78.3430,
+    "priceTierUSD": 200,
+    "tags": ["urban", "business", "modern", "night", "metropolitan"],
+    "images": {
+      "img_hydsh_01": "SheratonHyderabad.jpg"
+    },
+    "lastModified": "2026-05-21T00:00:00Z"
+  },
+  {
+    "propertyCode": "HYDWN",
+    "name": "The Westin Hyderabad Mindspace",
+    "brand": "Westin",
+    "city": "Hyderabad",
+    "marketCode": "HYD",
+    "lat": 17.4486,
+    "lon": 78.3772,
+    "priceTierUSD": 220,
+    "tags": ["urban", "modern", "business", "swimming-pool", "metropolitan"],
+    "images": {
+      "img_hydwn_01": "WestinHyderabad.jpg"
+    },
+    "lastModified": "2026-05-21T00:00:00Z"
+  },
+  {
+    "propertyCode": "HYDFF",
+    "name": "Fairfield by Marriott Hyderabad",
+    "brand": "Fairfield",
+    "city": "Hyderabad",
+    "marketCode": "HYD",
+    "lat": 17.3386,
+    "lon": 78.4301,
+    "priceTierUSD": 120,
+    "tags": ["urban", "business", "courtyard", "family-friendly"],
+    "images": {
+      "img_hydff_01": "FairfieldHyderabad.jpg"
+    },
+    "lastModified": "2026-05-21T00:00:00Z"
   }
 ]
