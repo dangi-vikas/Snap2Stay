@@ -208,5 +208,50 @@
       "img_hydff_01": "FairfieldHyderabad.jpg"
     },
     "lastModified": "2026-05-21T00:00:00Z"
+  },
+  {
+    "propertyCode": "HKTJWK",
+    "name": "JW Marriott Khao Lak Resort & Spa",
+    "brand": "JW Marriott",
+    "city": "Khao Lak",
+    "marketCode": "HKT",
+    "lat": 8.6370,
+    "lon": 98.2380,
+    "priceTierUSD": 500,
+    "tags": ["beach", "resort", "luxury", "tropical", "spa", "pool"],
+    "images": {
+      "img_hktjwk_01": "JWMarriottThailand.png"
+    },
+    "lastModified": "2026-05-22T00:00:00Z"
+  },
+  {
+    "propertyCode": "DPSLB",
+    "name": "The Laguna, a Luxury Collection Resort & Spa, Nusa Dua, Bali",
+    "brand": "Luxury Collection",
+    "city": "Nusa Dua",
+    "marketCode": "DPS",
+    "lat": -8.7975,
+    "lon": 115.2306,
+    "priceTierUSD": 450,
+    "tags": ["beach", "resort", "luxury", "tropical", "spa", "pool", "villa"],
+    "images": {
+      "img_dpslb_01": "TheLagunaBali.png"
+    },
+    "lastModified": "2026-05-22T00:00:00Z"
+  },
+  {
+    "propertyCode": "DPSRC",
+    "name": "The Royal Collection Resort & Spa Bali",
+    "brand": "Luxury Collection",
+    "city": "Seminyak",
+    "marketCode": "DPS",
+    "lat": -8.6880,
+    "lon": 115.1560,
+    "priceTierUSD": 550,
+    "tags": ["beach", "resort", "luxury", "tropical", "spa", "pool", "garden"],
+    "images": {
+      "img_dpsrc_01": "LuxuryResortBali.png"
+    },
+    "lastModified": "2026-05-22T00:00:00Z"
   }
 ]
