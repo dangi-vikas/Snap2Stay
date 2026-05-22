@@ -20,6 +20,8 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Optional;
 
 /**
@@ -67,6 +69,9 @@ public class ImagePreprocessor {
     }
 
     private BufferedImage decode(byte[] bytes) {
+        if (isHeic(bytes)) {
+            return decodeHeic(bytes);
+        }
         try (InputStream in = new ByteArrayInputStream(bytes)) {
             BufferedImage img = ImageIO.read(in);
             if (img == null) {
@@ -75,6 +80,59 @@ public class ImagePreprocessor {
             return img;
         } catch (IOException e) {
             throw new ImageRejectedException("BAD_IMAGE", "I/O error decoding image: " + e.getMessage());
+        }
+    }
+
+    private static boolean isHeic(byte[] bytes) {
+        if (bytes.length < 12) return false;
+        // HEIC/HEIF files have "ftyp" at offset 4, followed by brand like "heic", "heix", "mif1"
+        return bytes[4] == 'f' && bytes[5] == 't' && bytes[6] == 'y' && bytes[7] == 'p'
+                && (matchesBrand(bytes, "heic") || matchesBrand(bytes, "heix")
+                    || matchesBrand(bytes, "mif1") || matchesBrand(bytes, "heif"));
+    }
+
+    private static boolean matchesBrand(byte[] bytes, String brand) {
+        if (bytes.length < 12) return false;
+        return bytes[8] == brand.charAt(0) && bytes[9] == brand.charAt(1)
+                && bytes[10] == brand.charAt(2) && bytes[11] == brand.charAt(3);
+    }
+
+    private BufferedImage decodeHeic(byte[] bytes) {
+        Path heicFile = null;
+        Path jpegFile = null;
+        try {
+            heicFile = Files.createTempFile("snap2stay_", ".heic");
+            jpegFile = Path.of(heicFile.toString().replace(".heic", ".jpeg"));
+            Files.write(heicFile, bytes);
+
+            ProcessBuilder pb = new ProcessBuilder(
+                    "sips", "-s", "format", "jpeg", "-s", "formatOptions", "best",
+                    heicFile.toString(), "--out", jpegFile.toString());
+            pb.redirectErrorStream(true);
+            Process proc = pb.start();
+            int exitCode = proc.waitFor();
+            if (exitCode != 0 || !Files.exists(jpegFile)) {
+                log.warn("sips HEIC conversion failed (exit={})", exitCode);
+                throw new ImageRejectedException("BAD_IMAGE", "Could not decode HEIC image");
+            }
+
+            byte[] jpegBytes = Files.readAllBytes(jpegFile);
+            try (InputStream in = new ByteArrayInputStream(jpegBytes)) {
+                BufferedImage img = ImageIO.read(in);
+                if (img == null) {
+                    throw new ImageRejectedException("BAD_IMAGE", "Could not decode converted HEIC image");
+                }
+                return img;
+            }
+        } catch (ImageRejectedException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new ImageRejectedException("BAD_IMAGE", "HEIC conversion failed: " + e.getMessage());
+        } finally {
+            try {
+                if (heicFile != null) Files.deleteIfExists(heicFile);
+                if (jpegFile != null) Files.deleteIfExists(jpegFile);
+            } catch (IOException ignored) {}
         }
     }
 

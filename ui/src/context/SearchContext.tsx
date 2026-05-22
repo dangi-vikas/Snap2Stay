@@ -1,5 +1,6 @@
 import { createContext, useCallback, useContext, useMemo, useState, type ReactNode } from 'react';
 import type { VisualSearchResponseWithDebug } from '@/types/api';
+import heic2any from 'heic2any';
 
 interface SearchState {
   uploadedFile: File | null;
@@ -27,22 +28,41 @@ const initialState: SearchState = {
   error: null,
 };
 
+function isHeicFile(file: File): boolean {
+  return (
+    file.type === 'image/heic' ||
+    file.type === 'image/heif' ||
+    /\.(heic|heif)$/i.test(file.name)
+  );
+}
+
+async function createPreviewUrl(file: File): Promise<string> {
+  if (isHeicFile(file)) {
+    const blob = await heic2any({ blob: file, toType: 'image/jpeg', quality: 0.8 });
+    const result = Array.isArray(blob) ? blob[0] : blob;
+    return URL.createObjectURL(result);
+  }
+  return URL.createObjectURL(file);
+}
+
 export function SearchProvider({ children }: { children: ReactNode }) {
   const [state, setState] = useState<SearchState>(initialState);
 
   const setUpload = useCallback((file: File) => {
     setState((prev) => {
-      // Revoke any existing preview URL to avoid leaks
       if (prev.uploadedPreview) {
         URL.revokeObjectURL(prev.uploadedPreview);
       }
       return {
         ...prev,
         uploadedFile: file,
-        uploadedPreview: URL.createObjectURL(file),
+        uploadedPreview: null,
         result: null,
         error: null,
       };
+    });
+    createPreviewUrl(file).then((url) => {
+      setState((prev) => ({ ...prev, uploadedPreview: url }));
     });
   }, []);
 

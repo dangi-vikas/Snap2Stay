@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 260 48" fill="none">
+  <defs>
+    <linearGradient id="logo-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ff6b35"/>
+      <stop offset="100%" stop-color="#a37e3a"/>
+    </linearGradient>
+  </defs>
+  <!-- Rounded square background -->
+  <rect x="2" y="4" width="40" height="40" rx="10" fill="url(#logo-grad)"/>
+  <!-- Full cursive MS using italic script style with filled strokes -->
+  <!-- Cursive capital M with entry stroke, loops, and exit -->
+  <path d="M 5 36 Q 5 34 6 30 Q 7 24 8.5 16 Q 9 13 9.5 11 Q 10 9.5 10.8 9.5 Q 11.5 9.5 12 11 Q 13 14 14.5 22 Q 15 24.5 15.5 22 Q 16.5 16 17.5 11 Q 18 9.5 18.8 9.5 Q 19.5 9.5 20 11 Q 21 14 22 22 Q 22.5 24.5 23 22 Q 24 16 25 11 Q 25.5 9.5 26 10 Q 26.5 10.5 26.5 12 Q 26.5 16 26 22 Q 25.5 28 25 32 Q 24.8 34 25.5 35 Q 26 36 27 35"
+        fill="none" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- Cursive capital S with entry loop and tail -->
+  <path d="M 27 35 Q 28 33 29 30 Q 30 27 31.5 25 Q 33 23 34.5 23 Q 36 23 36.5 24.5 Q 37 26 36 28 Q 35 30 33 31 Q 31 32 29.5 31.5 Q 28 31 28 29 Q 28 27 29.5 25 Q 31 23 33 22 Q 35 21 36 19.5 Q 37 18 36.5 16 Q 36 14 34.5 13 Q 33 12 31 12.5 Q 29 13 28.5 14.5 Q 28 16 29 17"
+        fill="none" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- Snap2Stay small text -->
+  <text x="50" y="22" font-family="system-ui, -apple-system, 'Helvetica Neue', sans-serif" font-size="10" font-weight="600" letter-spacing="0.5" fill="#5a5a5a">
+    <tspan>SNAP</tspan><tspan fill="#ff6b35">2</tspan><tspan>STAY</tspan>
+  </text>
+  <!-- Marriott large text -->
+  <text x="50" y="38" font-family="Georgia, 'Times New Roman', serif" font-size="20" font-weight="700" letter-spacing="1" fill="#1a1a1a">Marriott</text>
+</svg>

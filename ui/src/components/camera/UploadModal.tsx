@@ -61,8 +61,9 @@ export function UploadModal({ open, onClose, onResults }: UploadModalProps) {
     (files: FileList | null) => {
       if (!files || files.length === 0) return;
       const file = files[0];
-      if (!file.type.startsWith('image/')) {
-        setError('Please upload an image (JPEG or PNG).');
+      const isHeic = /\.(heic|heif)$/i.test(file.name);
+      if (!file.type.startsWith('image/') && !isHeic) {
+        setError('Please upload an image (JPEG, PNG, WebP, or HEIC).');
         return;
       }
       if (file.size > 10 * 1024 * 1024) {
@@ -117,7 +118,10 @@ export function UploadModal({ open, onClose, onResults }: UploadModalProps) {
               <div>
                 <div className="flex items-center gap-2 mb-1">
                   <Sparkles className="w-4 h-4 text-snap-glow" />
-                  <span className="text-xs tracking-[0.3em] uppercase font-semibold text-snap-glow">
+                  <span
+                    className="text-base tracking-wide text-snap-glow"
+                    style={{ fontFamily: '"Playfair Display", serif', fontStyle: 'italic', fontWeight: 500 }}
+                  >
                     Snap2Stay
                   </span>
                 </div>
@@ -160,7 +164,7 @@ export function UploadModal({ open, onClose, onResults }: UploadModalProps) {
               <input
                 ref={inputRef}
                 type="file"
-                accept="image/jpeg,image/png,image/webp"
+                accept="image/jpeg,image/png,image/webp,image/heic,image/heif,.heic,.heif"
                 className="hidden"
                 onChange={(e) => handleFiles(e.target.files)}
               />
@@ -224,7 +228,7 @@ function DropZone({ isDragging, setDragging, onDrop, onPickFile }: DropZoneProps
         <p className="text-base font-semibold text-bonvoy-ink">
           {isDragging ? 'Drop your photo here' : 'Drag a photo or click to upload'}
         </p>
-        <p className="text-xs text-bonvoy-slate mt-1">JPEG, PNG, or WebP — up to 10 MB</p>
+        <p className="text-xs text-bonvoy-slate mt-1">JPEG, PNG, WebP, or HEIC — up to 10 MB</p>
       </div>
       <div className="flex gap-2 mt-2">
         {['Pinterest screenshot', 'Magazine clipping', 'Vacation photo'].map((label) => (
