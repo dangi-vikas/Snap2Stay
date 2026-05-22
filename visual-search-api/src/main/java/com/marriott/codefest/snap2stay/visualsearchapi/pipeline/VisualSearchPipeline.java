@@ -103,10 +103,40 @@ public class VisualSearchPipeline {
         List<ScoredImage> scored = hybrid.rerank(visualHits, queryTokens, corpusForIdf);
         List<ScoredImage> aggregated = aggregator.aggregate(scored);
 
-        // Filter out low-confidence matches (below 60%)
+        // Log the top scores to make the threshold tunable with evidence.
+        if (log.isInfoEnabled()) {
+            int peek = Math.min(5, aggregated.size());
+            StringBuilder sb = new StringBuilder("Top aggregated scores: ");
+            for (int i = 0; i < peek; i++) {
+                ScoredImage s = aggregated.get(i);
+                sb.append(s.image().propertyCode())
+                  .append("=").append(String.format("%.3f", s.combinedScore()))
+                  .append(" (vis=").append(String.format("%.3f", s.visualScore()))
+                  .append(", txt=").append(String.format("%.3f", s.textScore()))
+                  .append(") ");
+            }
+            log.info(sb.toString());
+        }
+
+        // Filter to confident matches (>= 0.70 combined). To avoid an empty
+        // results page on a clearly-best (but sub-threshold) hit — common when
+        // the embedding service produces slightly different tags/cosines on a
+        // re-uploaded seed image — always keep the single top candidate even
+        // if it's below threshold. This guarantees the user sees *something*
+        // for any image in the corpus.
         List<ScoredImage> confident = aggregated.stream()
                 .filter(s -> s.combinedScore() >= 0.70f)
                 .toList();
+
+        if (confident.isEmpty() && !aggregated.isEmpty()) {
+            ScoredImage topFallback = aggregated.get(0);
+            log.warn("All {} candidates below 0.70 confidence threshold (top={} score={}). " +
+                            "Falling back to top match so the rail is non-empty.",
+                    aggregated.size(),
+                    topFallback.image().propertyCode(),
+                    String.format("%.3f", topFallback.combinedScore()));
+            confident = List.of(topFallback);
+        }
 
         // Availability filter — only on the top N candidates to keep fan-out bounded
         List<ScoredImage> available = applyAvailability(confident, dates);

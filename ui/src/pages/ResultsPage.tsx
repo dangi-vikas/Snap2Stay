@@ -1,15 +1,25 @@
 import { useNavigate } from 'react-router-dom';
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import { motion } from 'framer-motion';
-import { ArrowLeft, Sparkles } from 'lucide-react';
+import { ArrowLeft, MapPin, Sparkles } from 'lucide-react';
 import { BonvoyHeader } from '@/components/layout/BonvoyHeader';
 import { BonvoyFooter } from '@/components/layout/BonvoyFooter';
 import { MatchCard } from '@/components/results/MatchCard';
 import { NearbyCard } from '@/components/results/NearbyCard';
 import { useSearch } from '@/context/SearchContext';
+import type { PropertyMatch } from '@/types/api';
+
+function matchesDestination(property: PropertyMatch, destination: string): boolean {
+  const needle = destination.trim().toLowerCase();
+  if (!needle) return true;
+  const city = property.city?.toLowerCase() ?? '';
+  const market = property.marketCode?.toLowerCase() ?? '';
+  const name = property.name?.toLowerCase() ?? '';
+  return city.includes(needle) || market.includes(needle) || name.includes(needle);
+}
 
 export function ResultsPage() {
-  const { result, uploadedPreview, reset } = useSearch();
+  const { result, uploadedPreview, destination, reset } = useSearch();
   const navigate = useNavigate();
 
   // If user lands here without a result (e.g. refresh), bounce home.
@@ -18,6 +28,21 @@ export function ResultsPage() {
       navigate('/', { replace: true });
     }
   }, [result, navigate]);
+
+  const filteredPrimary = useMemo(() => {
+    if (!result) return [];
+    if (!destination) return result.primaryMatches;
+    return result.primaryMatches.filter((p) => matchesDestination(p, destination));
+  }, [result, destination]);
+
+  const filteredNearby = useMemo(() => {
+    if (!result?.nearbyInLocation) return null;
+    if (!destination) return result.nearbyInLocation;
+    const filtered = result.nearbyInLocation.properties.filter((p) =>
+      matchesDestination(p, destination),
+    );
+    return { ...result.nearbyInLocation, properties: filtered };
+  }, [result, destination]);
 
   if (!result) return null;
 
@@ -67,8 +92,19 @@ export function ResultsPage() {
                 </span>
               </div>
               <h1 className="text-2xl md:text-3xl font-bold text-bonvoy-ink leading-tight">
-                We found {result.primaryMatches.length} {result.primaryMatches.length === 1 ? 'property' : 'properties'} matching your photo
+                We found {filteredPrimary.length} {filteredPrimary.length === 1 ? 'property' : 'properties'} matching your photo
+                {destination && (
+                  <>
+                    {' '}in <span className="text-snap-glow">{destination}</span>
+                  </>
+                )}
               </h1>
+              {destination && (
+                <div className="flex items-center gap-1.5 text-xs text-bonvoy-slate">
+                  <MapPin className="w-3.5 h-3.5 text-snap-glow" />
+                  <span>Filtered to: <strong className="text-bonvoy-ink">{destination}</strong></span>
+                </div>
+              )}
               {result.debug?.caption && (
                 <p className="text-sm text-bonvoy-slate italic">
                   Detected: "{result.debug.caption}"
@@ -99,40 +135,53 @@ export function ResultsPage() {
             <div>
               <h2 className="text-xl md:text-2xl font-bold text-bonvoy-ink">
                 Top matches for your photo
+                {destination && <span className="text-bonvoy-slate font-normal"> in {destination}</span>}
               </h2>
               <p className="text-sm text-bonvoy-slate mt-1">
                 Ranked by visual + caption similarity. Hover for the AI's reasoning.
               </p>
             </div>
             <span className="text-xs text-bonvoy-slate">
-              {result.primaryMatches.length} results
+              {filteredPrimary.length} results
             </span>
           </header>
-          <div className="grid grid-cols-1 gap-5">
-            {result.primaryMatches.map((match, i) => (
-              <MatchCard key={match.propertyCode} match={match} index={i} primary />
-            ))}
-          </div>
+          {filteredPrimary.length === 0 ? (
+            <div className="rounded-2xl border border-dashed border-bonvoy-line bg-white px-6 py-12 text-center">
+              <MapPin className="w-8 h-8 text-bonvoy-mist mx-auto mb-3" />
+              <p className="text-base font-semibold text-bonvoy-ink mb-1">
+                No visual matches in {destination}
+              </p>
+              <p className="text-sm text-bonvoy-slate">
+                Try a different city, or search again without a location filter.
+              </p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 gap-5">
+              {filteredPrimary.map((match, i) => (
+                <MatchCard key={match.propertyCode} match={match} index={i} primary />
+              ))}
+            </div>
+          )}
         </section>
 
         {/* Nearby in location */}
-        {result.nearbyInLocation && result.nearbyInLocation.properties.length > 0 && (
+        {filteredNearby && filteredNearby.properties.length > 0 && (
           <section>
             <header className="flex items-end justify-between mb-5">
               <div>
                 <h2 className="text-xl md:text-2xl font-bold text-bonvoy-ink">
-                  Other properties in {result.nearbyInLocation.city}
+                  Other properties in {filteredNearby.city}
                 </h2>
                 <p className="text-sm text-bonvoy-slate mt-1">
                   Same destination, different vibe — anchored on your top match.
                 </p>
               </div>
               <span className="text-xs text-bonvoy-slate">
-                {result.nearbyInLocation.properties.length} options
+                {filteredNearby.properties.length} options
               </span>
             </header>
             <div className="rail flex gap-5 overflow-x-auto pb-3 -mx-1 px-1">
-              {result.nearbyInLocation.properties.map((p, i) => (
+              {filteredNearby.properties.map((p, i) => (
                 <NearbyCard key={p.propertyCode} property={p} index={i} />
               ))}
             </div>
