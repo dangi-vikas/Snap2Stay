@@ -7,6 +7,7 @@ interface SearchState {
   result: VisualSearchResponseWithDebug | null;
   isAnalyzing: boolean;
   error: string | null;
+  destination: string | null;            // user-entered location filter
 }
 
 interface SearchContextValue extends SearchState {
@@ -14,6 +15,7 @@ interface SearchContextValue extends SearchState {
   setResult: (result: VisualSearchResponseWithDebug) => void;
   setAnalyzing: (v: boolean) => void;
   setError: (msg: string | null) => void;
+  setDestination: (destination: string | null) => void;
   reset: () => void;
 }
 
@@ -25,6 +27,7 @@ const initialState: SearchState = {
   result: null,
   isAnalyzing: false,
   error: null,
+  destination: null,
 };
 
 export function SearchProvider({ children }: { children: ReactNode }) {
@@ -58,6 +61,10 @@ export function SearchProvider({ children }: { children: ReactNode }) {
     setState((prev) => ({ ...prev, error: msg, isAnalyzing: false }));
   }, []);
 
+  const setDestination = useCallback((destination: string | null) => {
+    setState((prev) => ({ ...prev, destination }));
+  }, []);
+
   const reset = useCallback(() => {
     setState((prev) => {
       if (prev.uploadedPreview) URL.revokeObjectURL(prev.uploadedPreview);
@@ -66,8 +73,8 @@ export function SearchProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const value = useMemo<SearchContextValue>(
-    () => ({ ...state, setUpload, setResult, setAnalyzing, setError, reset }),
-    [state, setUpload, setResult, setAnalyzing, setError, reset],
+    () => ({ ...state, setUpload, setResult, setAnalyzing, setError, setDestination, reset }),
+    [state, setUpload, setResult, setAnalyzing, setError, setDestination, reset],
   );
 
   return <SearchContext.Provider value={value}>{children}</SearchContext.Provider>;
