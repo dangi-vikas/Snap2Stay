@@ -13,10 +13,11 @@ interface UploadModalProps {
 }
 
 export function UploadModal({ open, onClose, onResults }: UploadModalProps) {
-  const { setUpload, setResult, setAnalyzing, setError, isAnalyzing, uploadedPreview, error } = useSearch();
+  const { setUpload, setResult, setAnalyzing, setError, setDestination, isAnalyzing, uploadedPreview, error } = useSearch();
   const [isDragging, setIsDragging] = useState(false);
   const [shownTags, setShownTags] = useState<string[]>([]);
   const [useImageLocation, setUseImageLocation] = useState(false);
+  const [destination, setDestinationInput] = useState('');
   const inputRef = useRef<HTMLInputElement>(null);
 
   // ESC closes the modal (when not in the middle of analyzing).
@@ -29,13 +30,27 @@ export function UploadModal({ open, onClose, onResults }: UploadModalProps) {
     return () => window.removeEventListener('keydown', onKey);
   }, [open, isAnalyzing, onClose]);
 
+  // Clear the location input every time the modal is freshly opened so the
+  // user starts each search with a clean slate.
+  useEffect(() => {
+    if (open) {
+      setDestinationInput('');
+      setShownTags([]);
+    }
+  }, [open]);
+
   const submit = useCallback(
     async (file: File) => {
       setUpload(file);
       setAnalyzing(true);
       setShownTags([]);
+      const trimmedDestination = destination.trim();
+      setDestination(trimmedDestination || null);
       try {
-        const result = await visualSearch(file, { useImageLocation });
+        const result = await visualSearch(file, {
+          useImageLocation,
+          destination: trimmedDestination || undefined,
+        });
 
         // Stagger the tags in to feel like the AI is "writing" them.
         const tags = result.debug?.tags ?? [];
@@ -54,7 +69,7 @@ export function UploadModal({ open, onClose, onResults }: UploadModalProps) {
         setError(e instanceof Error ? e.message : 'Search failed');
       }
     },
-    [setUpload, setAnalyzing, setResult, setError, onResults, useImageLocation],
+    [setUpload, setAnalyzing, setResult, setError, setDestination, onResults, useImageLocation, destination],
   );
 
   const handleFiles = useCallback(
@@ -140,6 +155,10 @@ export function UploadModal({ open, onClose, onResults }: UploadModalProps) {
             <div className="p-7">
               {!uploadedPreview && !isAnalyzing && (
                 <>
+                  <LocationInput
+                    value={destination}
+                    onChange={setDestinationInput}
+                  />
                   <DropZone
                     isDragging={isDragging}
                     setDragging={setIsDragging}
@@ -314,6 +333,43 @@ function Step({ children, done, pending }: { children: React.ReactNode; done?: b
       />
       <span className={done ? 'text-bonvoy-ink' : 'text-bonvoy-slate'}>{children}</span>
     </div>
+  );
+}
+
+interface LocationInputProps {
+  value: string;
+  onChange: (value: string) => void;
+}
+
+function LocationInput({ value, onChange }: LocationInputProps) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 8 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay: 0.05 }}
+      className="mb-4"
+    >
+      <label htmlFor="visual-search-location" className="flex items-center gap-2 mb-2">
+        <MapPin className="w-4 h-4 text-snap-glow" />
+        <span className="text-xs tracking-[0.2em] uppercase font-semibold text-bonvoy-slate">
+          Location (optional)
+        </span>
+      </label>
+      <input
+        id="visual-search-location"
+        type="text"
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        placeholder="e.g. Dubai, Hilton Head, Marco Island"
+        className="w-full px-4 py-3 rounded-xl border border-bonvoy-line bg-white
+                   text-bonvoy-ink placeholder-bonvoy-mist text-sm
+                   focus:outline-none focus:border-snap-glow focus:ring-2 focus:ring-snap-glow/20
+                   transition-all"
+      />
+      <p className="text-xs text-bonvoy-slate mt-1.5 leading-relaxed">
+        Narrow results to a specific city or destination. We'll only show visually matching properties from that location.
+      </p>
+    </motion.div>
   );
 }
 
