@@ -1,6 +1,6 @@
 # Snap2Stay
 
-> Codefest 4.0 — Marriott visual property search.
+> Visual property search.
 > Snap a photo, find the matching Marriott property, plus other places in that destination.
 
 Architecture: `[../docs/VisualSearchArchitecture.md](../docs/VisualSearchArchitecture.md)`
